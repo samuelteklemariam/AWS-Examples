@@ -1,5 +1,16 @@
-tasks: 
-  -   name: aws-cli
-  
-     env : 
-       AWS_CLI_AUTO_PROMPT : on-partial
+tasks:
+  - name: aws-cli
+    init: |
+      if ! command -v aws &> /dev/null; then
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        sudo apt update
+        sudo apt install unzip -y
+        unzip -o awscliv2.zip
+        sudo ./aws/install --update
+      fi
+
+    command: |
+      aws --version
+
+env:
+  AWS_CLI_AUTO_PROMPT: on-partial
