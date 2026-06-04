@@ -1,16 +1,24 @@
 tasks:
-  - name: aws-cli
+  - name: Install AWS CLI
     init: |
-      if ! command -v aws &> /dev/null; then
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        sudo apt update
-        sudo apt install unzip -y
-        unzip -o awscliv2.zip
-        sudo ./aws/install --update
-      fi
+      curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      sudo apt update
+      sudo apt install unzip -y
+      unzip -o awscliv2.zip
+      sudo ./aws/install --update
+
+      mkdir -p ~/.aws
+
+      echo "[default]" > ~/.aws/config
+      echo "region = us-east-1" >> ~/.aws/config
+      echo "output = json" >> ~/.aws/config
+
+      echo "[default]" > ~/.aws/credentials
+      echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> ~/.aws/credentials
+      echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials
+
+      chmod 600 ~/.aws/credentials
 
     command: |
       aws --version
-
-env:
-  AWS_CLI_AUTO_PROMPT: on-partial
+      aws sts get-caller-identity || true
